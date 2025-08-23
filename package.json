@@ -3,6 +3,10 @@
     "vite": "^7.0.5"
   },
   "dependencies": {
+    "gh-pages": "^6.3.0",
     "three": "^0.178.0"
+  },
+  "scripts": {
+    "deploy": "gh-pages -d dist"
   }
 }
