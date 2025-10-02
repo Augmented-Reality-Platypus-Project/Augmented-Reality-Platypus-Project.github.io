@@ -129,6 +129,43 @@ const animationInformation = [
     [99999999, 0]
 ]
 
+const newSceneInformation = {
+    "Scene1": {
+        "AudioStart": 0,
+        "AudioEnd": 10,
+        "Curves": [
+            [   C_ORIGIN, [ [0.0, 0.0, 0.0] ]],
+            [   C_LINEAR, [ [1.0, 1.0, 1.0] ]],
+            [   C_LINEAR, [ [4.0, -3.0, -2.0] ]],
+            [C_QUADRATIC, [ [2.0, 0.0, 1.0], [5.0, -5.0, 5.0] ]],
+            [   C_LINEAR, [ [-3.0, 0.0, 0.0] ]]
+        ],
+        "Subtitles": [
+            [0, 3.5, "This is a duck-billed platypus."],
+            [3.5, 8, "The local Wiradjuri people, call them Biladurang."],
+            [8, 11, "They are very shy, and good at hiding"],
+            [11, 15, "so it's extremely rare to see platypus in the wild."]
+        ],
+        "CurveDuration": 10
+    },
+    "Scene2": {
+        "AudioStart": 10,
+        "AudioEnd": 20,
+        "curves": [
+            [   C_ORIGIN, [ [-3.0, 0.0, 0.0] ]],
+            [   C_LINEAR, [ [-1.0, 1.0, -1.0] ]],
+            [   C_LINEAR, [ [-4.0, -3.0, 2.0] ]],
+            [   C_LINEAR, [ [3.0, 0.0, -0.0] ]]
+        ],
+        "subtitles": [
+            [0, 3, "Hello world 2"],
+            [3, 6, "More testing 2"],
+            [6, 10, "Even morerer testing 2"]
+        ],
+        "CurveDuration": 8
+    }
+}
+
 async function initCamera() {
     try {
         const stream = await navigator.mediaDevices.getUserMedia({
@@ -169,6 +206,10 @@ async function initCamera() {
 // store visibility data in object;
 //  can only draw line when both are visible.
 let markerVisible = { marker0: false, m1: false };
+let markerSceneMap = { marker0: "Scene1", marker1: "Scene2"};
+let markerPositions = [new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, 0)];
+
+let lastMarker = -1;
 
 AFRAME.registerComponent('registerevents', {
     init: function () 
@@ -178,6 +219,11 @@ AFRAME.registerComponent('registerevents', {
         marker.addEventListener('markerFound', function() {
             markerVisible[ marker.id ] = true;
             console.log(marker.id, " found");
+            if (marker.id != lastMarker) {
+                console.log("Scene change!");
+                changeScene(markerSceneMap[marker.id]);
+            }
+            lastMarker = marker.id;
         });
 
         marker.addEventListener('markerLost', function() {
@@ -191,6 +237,8 @@ AFRAME.registerComponent('run', {
     init: function() {
         this.m0 = document.querySelector("#marker0");
         this.p0 = new THREE.Vector3();
+        this.m1 = document.querySelector("#marker1");
+        this.p1 = new THREE.Vector3();
     },
     
     tick: function(time, deltaTime) {
@@ -200,10 +248,17 @@ AFRAME.registerComponent('run', {
             // let newPos = new THREE.Vector3((this.p0.x + 1.0) / 2 * windowSize[0], (this.p0.y + 1.0) / 2 * windowSize[1], -1).unproject(camera);
             // arObjects[0].position.set((this.p0.x + 1.0) / 2 * windowSize[0], (this.p0.y + 1.0) / 2 * windowSize[1], this.p0.z);
             // arObjects[0].position.set(newPos.x, newPos.y, newPos.z);
-            arObjects[0].position.set(this.p0.x*100, this.p0.y*100, this.p0.z*100);
+            // arObjects[0].position.set(this.p0.x*100, this.p0.y*100, this.p0.z*100);
+            markerPositions[0] = this.p0;
         }
     }
 })
+
+function changeScene(sceneId) {
+    audioSegments[0].pause();
+    audioSegments[0].currentTime = newSceneInformation[sceneId]["AudioStart"];
+    audioSegments[0].play();
+}
 
 /*
 function initOrientation() {
@@ -452,7 +507,6 @@ function loadModelAudio(model, modelIndex) {
 }
 
 function checkReadyToStart() {
-    console.log('Is Location Ready:', isLocationReady);
     console.log('Is Camera Ready:', isCameraReady);
     console.log('Is Audio Ready:', isAudioReady);
     if (isLocationReady && isCameraReady && isAudioReady) {
@@ -556,7 +610,7 @@ animationOne.crossFadeTo(walkAction, 0.5);
                 movDir.normalize();
                 let rotAngel = Math.atan2(movDir.x, movDir.z);
                 model.rotation.y = rotAngel * Math.PI;
-                // model.position.set(nextPos.x, nextPos.y, nextPos.z);
+                model.position.set(nextPos.x+markerPositions[0].x*100, nextPos.y+markerPositions[0].y*100, nextPos.z+markerPositions[0].z*100);
 
                 document.getElementById("model-coords").textContent = nextPos.x + " " + nextPos.y + " " + nextPos.z;
                 
