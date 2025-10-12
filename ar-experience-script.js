@@ -34,7 +34,8 @@ const launchFlags = {
     "Model": false,
     "Audio": false,
     "Paths": false,
-    "Camera": true
+    "Camera": false,
+    "Three": false,
 }
 
 const C_ORIGIN = 0;
@@ -186,11 +187,10 @@ AFRAME.registerComponent('run', {
             // console.log(this.p0);
             markerPositions[0] = this.p0;
             currentSceneName = "Scene1";
-
             activePath = 0;
         }
         else if (markerInformation[this.m1.id]["Visible"]) {
-            this.m0.object3D.getWorldPosition(this.p1);
+            this.m1.object3D.getWorldPosition(this.p1);
             // console.log(this.p0);
             markerPositions[1] = this.p1;
             currentSceneName = "Scene2";
@@ -208,6 +208,7 @@ function changeScene(sceneId) {
         // activePath = 0;
         animTimer = 0;
         elapsedTime = 0;
+        currentAnimation = -1;
         document.getElementById("subtitle-div").style.visibility = "visible";
     }
 }
@@ -217,9 +218,9 @@ async function initCamera() {
         const stream = await navigator.mediaDevices.getUserMedia({
             video: {
                 facingMode: 'environment',
-                // width: { ideal: 1920, min: 1280 },
-                // height: { ideal: 1080, min: 720 },
-                // frameRate: { ideal: 120, min: 30 }
+                width: { ideal: 1920, min: 1280 },
+                height: { ideal: 1080, min: 720 },
+                frameRate: { ideal: 120, min: 30 }
             },
             audio: false
         });
@@ -311,6 +312,8 @@ function initThreeJS() {
     scene.add(modelLight);
 
     console.log('Three.js initialized');
+
+    launchFlags["Three"] = true;
 }
 
 function loadARObjects() {
@@ -442,8 +445,8 @@ function animate() {
 
                     if (animTimer < curScene["CurveDuration"]) {
                         model.position.set(
-                            previousPos.x*3+markerPositions[0].x*modelDistance*Math.tan(35 * (Math.PI / 180)),
-                            previousPos.y*3+markerPositions[0].y*modelDistance*Math.tan(35 * (Math.PI / 180)),
+                            previousPos.x*3+markerPositions[activePath].x*modelDistance*Math.tan(35 * (Math.PI / 180)),
+                            previousPos.y*3+markerPositions[activePath].y*modelDistance*Math.tan(35 * (Math.PI / 180)),
                             previousPos.z*3-modelDistance
                         );
                         // model.position.set(
