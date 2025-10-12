@@ -608,37 +608,6 @@ function findTargetBone() {
 
 let previousPos = new THREE.Vector3(0, 0, 0);
 function animate() {
-/*
-console.log('Model position:', arObjects[0]?.position);
-console.log('Camera position:', camera.position);
-console.log('Camera looking at:', camera.getWorldDirection(new THREE.Vector3()));
-
-const animationOne = mixer.clipAction(gltf.animations[0]);
-const animationTwo = mixer.clipAction(gltf.animations[1]);
-const animationThree = mixer.clipAction(gltf.animations[2]);
-
-animationOne.play();
-animationTwo.reset().play();
-animationOne.crossFadeTo(walkAction, 0.5);
-*/
-
-    // mixers.forEach(mixer => mixer.update(clock.getDelta()));
-
-    // if (arObjects.length > 0 && targetBone) {
-    //     const model = arObjects[0];
-
-    //     modelLight.position.copy(model.position);
-    //     modelLight.position.y += 2;
-
-    //     targetBone.getWorldPosition(targetPosition);
-
-    //     const targetCameraPos = targetPosition.clone().add(offset);
-
-    //     camera.position.y = model.position.x;
-    //     camera.position.y = model.position.z + 50;
-    //     camera.position.lerp(targetCameraPos, 0.1);
-    //     camera.lookAt(targetPosition);
-    // }
 
     const deltaTime = clock.getDelta();
 
