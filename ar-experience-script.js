@@ -16,6 +16,7 @@ let animTimer = 0;
 let elapsedTime = 0;
 let currentAnimation = -1;
 let currentSceneName = "";
+let experienceStarted = false;
 
 let modelDistance = 80;
 
@@ -32,7 +33,8 @@ const arObjectsConfig = [
 const launchFlags = {
     "Model": false,
     "Audio": false,
-    "Paths": false
+    "Paths": false,
+    "Camera": true
 }
 
 const C_ORIGIN = 0;
@@ -198,14 +200,54 @@ AFRAME.registerComponent('run', {
 })
 
 function changeScene(sceneId) {
-    audioPlayer.pause();
-    audioPlayer.currentTime = sceneInformation[sceneId]["AudioStart"];
-    audioPlayer.play();
-    currentSceneName = sceneId;
-    // activePath = 0;
-    animTimer = 0;
-    elapsedTime = 0;
-    document.getElementById("subtitle-div").style.visibility = "visible";
+    if (experienceStarted) {
+        audioPlayer.pause();
+        audioPlayer.currentTime = sceneInformation[sceneId]["AudioStart"];
+        audioPlayer.play();
+        currentSceneName = sceneId;
+        // activePath = 0;
+        animTimer = 0;
+        elapsedTime = 0;
+        document.getElementById("subtitle-div").style.visibility = "visible";
+    }
+}
+
+async function initCamera() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+            video: {
+                facingMode: 'environment',
+                width: { ideal: 1920, min: 1280 },
+                height: { ideal: 1080, min: 720 },
+                frameRate: { ideal: 120, min: 30 }
+            },
+            audio: false
+        });
+
+        const video = document.getElementById('camera-feed');
+        if (video) {
+            video.srcObject = stream;
+            video.autoplay = true;
+            video.playsinline = true;
+            video.muted = true;
+
+            await new Promise((resolve) => {
+                video.onloadedmetadata = () => {
+                    video.play().then(resolve).catch(console.error);
+                };
+            });
+        }
+
+        // isCameraReady = true;
+        console.log('Camera ready');
+        launchFlags["Camera"] = true;
+        // checkReadyToStart();
+        return true;
+
+    } catch (error) {
+        console.error('Camera failed to initialize:', error);
+        return false;
+    }
 }
 
 function initThreeJS() {
@@ -521,12 +563,19 @@ function startFunction() {
     audioPlayer.pause();
     document.getElementById("welcome-div").style.visibility = "hidden";
 
-    // changeScene("Scene1");
+    experienceStarted = true;
+
+    // changeScene("Scene2");
 }
 
 async function init() {
     console.log('Initializing AR experience...');
 
+    const cameraSuccess = await initCamera();
+    if (!cameraSuccess) {
+        console.error('Camera initalization failed');
+        return;
+    }
     initThreeJS();
     loadARObjects();
     loadModelAudio();
