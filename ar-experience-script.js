@@ -451,6 +451,7 @@ function animate() {
             currentSceneName = "";
             arObjects[0].position.y = 1000;
             document.getElementById("subtitle-div").style.visibility = "hidden";
+            lastMarker = -1;
         }
 
         // console.log(elapsedTime);
