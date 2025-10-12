@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+        <meta name="description" content="Wonga Wetlands PlatARpus" />
+        <meta name="apple-mobile-web-app-title" content="Wonga Wetlands AR" />
+        <meta charset="utf-8" />
+        <title>Wonga Wetlands PlatARpus</title>
+
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="ar-experience-style.css">
+
+        <script src="https://aframe.io/releases/1.7.1/aframe.min.js"></script>
+        <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+
+    </head>
+    <body>
+        <script src="ar-experience-script.js"></script>
+
+
+        <div id="welcome-div">
+            <div id="welcome-header-div">
+                <img src="resources/images/AlburyCity_Trans.png" alt="Albury City Council" class="logo">
+                <h1>PlatARpus</h1>
+            </div>
+            <br><br>
+            <div id="welcome-info-div">
+                <h2>Welcome to the Wonga Wetlands PlatARpus experience!</h2>
+                <br><br>
+                <p>Please ensure camera permissions are enabled.</p>
+                <br>
+                <p>Point your camera at one of the nearby AR markers to play the experience!</p>
+                <br><br>
+            </div>
+            <div id="start-button-div">
+                <button type="button" id="start-button" disabled="true" onclick="startFunction()">Now Loading...</button>
+                <p><br>Please press the START button to continue to the Augmented Reality experience.</p>
+            </div>
+        </div>
+        <div id="subtitle-div">
+            <p id="subtitle-container" style="color:black;">Default text</p>
+        </div>
+        <!-- <div id="debug-div">
+            <p id="model-coords">More default text</p>
+            <p id="elapsed-time">More</p>
+            <p id="active-animation">Temp</p>
+        </div> -->
+        
+        <div>
+            <a-scene embedded>
+                <a-marker type="pattern" url="resources/data/kanji.patt" id="marker0" size="0.1" registerevents></a-marker>
+                <a-marker type="pattern" url="resources/data/alpha.patt" id="marker1" registerevents></a-marker>
+                <a-entity run></a-entity>
+                <a-entity camera loadcamera></a-entity>
+            </a-scene>
+        </div>
+
+        <div id="subtitle-box">
+            <label>
+                <input type="checkbox" id="subtitle-choice">
+                Enable subtitles
+            </label>
+        </div>
+
+        <div id="canvas-container"></div>
+    </body>
+</html>
