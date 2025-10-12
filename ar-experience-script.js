@@ -525,8 +525,8 @@ function startFunction() {
 
     experienceStarted = true;
 
-    activePath = 1;
-    changeScene("Scene2");
+    // activePath = 1;
+    // changeScene("Scene2");
 }
 
 async function init() {
